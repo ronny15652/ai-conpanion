@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -11,8 +9,33 @@ datasource db {
 }
 
 
+// model.prisma
 
 model Category {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
+  id         String     @id @map("_id") // Utiliza String para mapear o _id do MongoDB
+  name       String
+  companions Companion[]
 }
+
+model Companion {
+  id            String    @id @map("_id") // Utiliza String para mapear o _id do MongoDB
+  userId        String
+  userName      String
+  src           String
+  name          String
+  description   String
+  instructions  String
+  seed          String
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
+  @@fulltext([name])
+}
+
+
+
